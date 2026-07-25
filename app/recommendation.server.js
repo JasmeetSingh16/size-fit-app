@@ -1,3 +1,10 @@
+/**
+ * Size recommendation engine — v1 (rules-based).
+ *
+ * Kept as a pure function with a clean input/output contract so v2 can
+ * swap this out for a trained model without touching any calling code.
+ */
+
 const FIT_ADJUSTMENT = {
   snug: -1,
   regular: 0,
