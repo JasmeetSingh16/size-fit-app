@@ -1,0 +1,82 @@
+// Size & Fit Predictor — data model
+// Reuses the same pattern as your Bulk Tag Manager (Prisma + Postgres on Railway)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id             String    @id
+  shop           String
+  state          String
+  isOnline       Boolean   @default(false)
+  scope          String?
+  expires        DateTime?
+  accessToken    String
+  userId         BigInt?
+  firstName      String?
+  lastName       String?
+  email          String?
+  accountOwner   Boolean   @default(false)
+  locale         String?
+  collaborator   Boolean?  @default(false)
+  emailVerified  Boolean?  @default(false)
+  refreshToken   String?
+  refreshTokenExpires DateTime?
+}
+// One size chart per product (or per collection if you want to generalize later)
+model SizeChart {
+  id          String   @id @default(cuid())
+  shop        String
+  productId   String   // Shopify product GID
+  productName String?
+  fitType     String   @default("regular") // "slim" | "regular" | "loose" — affects scoring
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sizes SizeEntry[]
+
+  @@unique([shop, productId])
+  @@index([shop])
+}
+
+// Each row of the chart: one size with its measurement ranges
+model SizeEntry {
+  id          String    @id @default(cuid())
+  sizeChartId String
+  sizeChart   SizeChart @relation(fields: [sizeChartId], references: [id], onDelete: Cascade)
+
+  label      String // "S", "M", "L", "XL"...
+  heightMinCm Float?
+  heightMaxCm Float?
+  weightMinKg Float?
+  weightMaxKg Float?
+  chestMinCm  Float?
+  chestMaxCm  Float?
+  waistMinCm  Float?
+  waistMaxCm  Float?
+
+  @@index([sizeChartId])
+}
+
+// Every quiz submission from a customer on the storefront
+model QuizResponse {
+  id            String   @id @default(cuid())
+  shop          String
+  productId     String
+  heightCm      Float?
+  weightKg      Float?
+  fitPreference String   @default("regular") // "snug" | "regular" | "loose"
+  referenceBrand String?
+  referenceSize  String?
+  recommendedSize String
+  confidence      Float   // 0.0–1.0
+  createdAt       DateTime @default(now())
+
+  @@index([shop, productId])
+}

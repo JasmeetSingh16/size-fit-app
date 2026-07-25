@@ -1,0 +1,96 @@
+{% comment %}
+  Fit Quiz block — v2 design: clearer hierarchy, segmented fit selector,
+  confidence bar on the result. Still inherits theme tokens, still
+  collapsed by default so it never crowds the page.
+{% endcomment %}
+
+<div
+  class="fit-quiz-widget"
+  data-product-id="{{ product.id }}"
+  data-shop="{{ shop.permanent_domain }}"
+  data-block-id="{{ block.id }}"
+>
+  <button type="button" class="fit-quiz-trigger" aria-expanded="false">
+    <svg class="fit-quiz-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 8V4h4M17 4h4v4M21 16v4h-4M7 20H3v-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 12h8M8 9v6M16 9v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    <span>{{ block.settings.trigger_text | default: "Find my size" }}</span>
+  </button>
+
+  <div class="fit-quiz-panel" hidden>
+    <div class="fit-quiz-step" data-step="form">
+      <p class="fit-quiz-lede">A couple of quick details for a size recommendation.</p>
+
+      <form class="fit-quiz-form">
+        <div class="fit-quiz-field-row">
+          <label class="fit-quiz-field">
+            <span class="fit-quiz-label">Height (cm)</span>
+            <input type="number" name="heightCm" min="100" max="250" required placeholder="170">
+          </label>
+          <label class="fit-quiz-field">
+            <span class="fit-quiz-label">Weight (kg)</span>
+            <input type="number" name="weightKg" min="30" max="200" required placeholder="65">
+          </label>
+        </div>
+
+        <fieldset class="fit-quiz-fit">
+          <legend class="fit-quiz-label">Preferred fit</legend>
+          <div class="fit-quiz-segmented" role="radiogroup">
+            <input type="radio" name="fitPreference" id="fit-snug-{{ block.id }}" value="snug">
+            <label for="fit-snug-{{ block.id }}">Snug</label>
+
+            <input type="radio" name="fitPreference" id="fit-regular-{{ block.id }}" value="regular" checked>
+            <label for="fit-regular-{{ block.id }}">Regular</label>
+
+            <input type="radio" name="fitPreference" id="fit-loose-{{ block.id }}" value="loose">
+            <label for="fit-loose-{{ block.id }}">Loose</label>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="fit-quiz-submit">
+          <span class="fit-quiz-submit-text">Get my size</span>
+        </button>
+      </form>
+    </div>
+
+    <div class="fit-quiz-step" data-step="result" hidden>
+      <div class="fit-quiz-result-size" data-result-size></div>
+      <div class="fit-quiz-result-label" data-result-label></div>
+      <div class="fit-quiz-confidence">
+        <div class="fit-quiz-confidence-track">
+          <div class="fit-quiz-confidence-fill" data-confidence-fill></div>
+        </div>
+        <span class="fit-quiz-confidence-text" data-confidence-text></span>
+      </div>
+      <button type="button" class="fit-quiz-retry" data-retry>Try different numbers</button>
+    </div>
+
+    <div class="fit-quiz-step" data-step="empty" hidden>
+      <p class="fit-quiz-empty-text">No size guide is available for this product yet.</p>
+    </div>
+  </div>
+</div>
+
+{{ 'fit-quiz.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'fit-quiz.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Fit Quiz",
+  "target": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "trigger_text",
+      "label": "Button text",
+      "default": "Find my size"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color (leave blank to inherit theme)"
+    }
+  ]
+}
+{% endschema %}
