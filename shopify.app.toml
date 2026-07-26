@@ -1,6 +1,6 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 client_id = "a501412486e47d05c32949cd348de62b"
-application_url = "https://example.com"
+application_url = "https://size-fit-app.onrender.com"
 embedded = true
 name = "size-fit-app"
 
@@ -9,7 +9,7 @@ name = "size-fit-app"
 scopes = "write_products,read_products"
 
 [app_proxy]
-url = "https://example.com"
+url = "https://size-fit-app.onrender.com"
 subpath = "fit-quiz"
 prefix = "apps"
 
@@ -25,8 +25,7 @@ api_version = "2026-10"
   topics = [ "app/scopes_update" ]
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [ "https://size-fit-app.onrender.com/api/auth" ]
 
 [build]
-include_config_on_deploy = true
 automatically_update_urls_on_dev = true
